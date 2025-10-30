@@ -1,5 +1,3 @@
-// === SCRIPT FUNCIONAL PARA ACESSIBILIDADE E ÁRVORE INTERATIVA ===
-
 document.addEventListener("DOMContentLoaded", () => {
   // ==== ACESSIBILIDADE ====
   let tamanhoFonte = 100;
@@ -63,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
     if (profundidade === 0) return;
-
     const x2 = x1 + Math.cos(angulo) * comprimento;
     const y2 = y1 - Math.sin(angulo) * comprimento;
 
