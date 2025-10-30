@@ -1,9 +1,13 @@
+script 
+
 
 // === ACESSIBILIDADE ===
 let tamanhoFonte = 100;
 const body = document.body;
 const aumentarTexto = document.getElementById("aumentarTexto");
 const diminuirTexto = document.getElementById("diminuirTexto");
+
+
 
 
 aumentarTexto.addEventListener("click", () => {
@@ -14,6 +18,8 @@ aumentarTexto.addEventListener("click", () => {
 });
 
 
+
+
 diminuirTexto.addEventListener("click", () => {
   if (tamanhoFonte > 80) {
     tamanhoFonte -= 10;
@@ -22,8 +28,12 @@ diminuirTexto.addEventListener("click", () => {
 });
 
 
+
+
 const contrasteBtn = document.getElementById("altoContraste");
 let contrasteAtivo = false;
+
+
 
 
 contrasteBtn.addEventListener("click", () => {
@@ -32,8 +42,12 @@ contrasteBtn.addEventListener("click", () => {
 });
 
 
+
+
 const leitorBtn = document.getElementById("leitorVoz");
 let leituraAtiva = false;
+
+
 
 
 leitorBtn.addEventListener("click", () => {
@@ -53,6 +67,8 @@ leitorBtn.addEventListener("click", () => {
 });
 
 
+
+
 // === ÁRVORE INTERATIVA ===
 const canvas = document.getElementById("canvas-arvore");
 const ctx = canvas.getContext("2d");
@@ -60,8 +76,12 @@ const form = document.getElementById("form-arvore");
 const mensagens = [];
 
 
+
+
 canvas.width = window.innerWidth * 0.8;
 canvas.height = 600;
+
+
 
 
 // Função para desenhar galhos estilo Guapuruvu
@@ -69,14 +89,20 @@ function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
   if (profundidade === 0) return;
 
 
+
+
   const x2 = x1 + Math.cos(angulo) * comprimento;
   const y2 = y1 - Math.sin(angulo) * comprimento;
+
+
 
 
   // Gradiente do galho
   const grad = ctx.createLinearGradient(x1, y1, x2, y2);
   grad.addColorStop(0, "#6b4226");
   grad.addColorStop(1, "#4e342e");
+
+
 
 
   ctx.lineWidth = espessura;
@@ -94,6 +120,8 @@ function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
   ctx.stroke();
 
 
+
+
   // Ramificação espaçada estilo Guapuruvu
   const numGalhos = 2; // menos galhos para mais espaço
   for (let i = 0; i < numGalhos; i++) {
@@ -105,13 +133,19 @@ function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
 }
 
 
+
+
 // Desenhar árvore estática estilo Guapuruvu
 function desenharArvore() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
+
+
   // Tronco principal longo e reto
   desenharGalho(canvas.width / 2, canvas.height, 180, Math.PI / 2, 5, 20);
+
+
 
 
   // Folhas (mensagens) estáticas
@@ -128,6 +162,8 @@ function desenharArvore() {
 }
 
 
+
+
 // Adicionar mensagens de usuários
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -135,11 +171,15 @@ form.addEventListener("submit", e => {
   if (!texto) return;
 
 
+
+
   const proibidas = ["palavrão", "idiota", "burro", "estúpido", "otário"];
   if (proibidas.some(p => texto.toLowerCase().includes(p))) {
     alert("Por favor, use uma linguagem respeitosa 💬");
     return;
   }
+
+
 
 
   mensagens.push({
@@ -150,13 +190,23 @@ form.addEventListener("submit", e => {
   });
 
 
+
+
   document.getElementById("mensagem").value = "";
   desenharArvore();
 });
 
 
+
+
 // Inicializa árvore
 desenharArvore();
+
+
+
+
+
+
 
 
 
