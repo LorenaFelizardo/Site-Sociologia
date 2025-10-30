@@ -112,3 +112,84 @@ canvas {
   display: block;
   margin: 20px auto;
 }
+
+// === BOTÕES DE ACESSIBILIDADE ===
+const aumentar = document.getElementById("aumentarTexto");
+const diminuir = document.getElementById("diminuirTexto");
+const contraste = document.getElementById("altoContraste");
+const leitor = document.getElementById("leitorVoz");
+
+let tamanhoAtual = 16;
+
+// Aumentar texto
+aumentar.addEventListener("click", () => {
+  tamanhoAtual += 2;
+  document.body.style.fontSize = `${tamanhoAtual}px`;
+});
+
+// Diminuir texto
+diminuir.addEventListener("click", () => {
+  if (tamanhoAtual > 10) {
+    tamanhoAtual -= 2;
+    document.body.style.fontSize = `${tamanhoAtual}px`;
+  }
+});
+
+// Alto contraste
+contraste.addEventListener("click", () => {
+  document.body.classList.toggle("contraste");
+});
+
+// Leitor de voz
+leitor.addEventListener("click", () => {
+  const texto = document.body.innerText;
+  const utter = new SpeechSynthesisUtterance(texto);
+  utter.lang = "pt-BR";
+  window.speechSynthesis.speak(utter);
+});
+
+// === ÁRVORE INTERATIVA ===
+const canvas = document.getElementById("canvas-arvore");
+const ctx = canvas.getContext("2d");
+const form = document.getElementById("form-arvore");
+const msgInput = document.getElementById("mensagem");
+
+let folhas = [];
+
+function desenharArvore() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // tronco
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(canvas.width / 2 - 10, canvas.height - 100, 20, 100);
+
+  // galhos e folhas
+  folhas.forEach((folha) => {
+    ctx.beginPath();
+    ctx.arc(folha.x, folha.y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = folha.cor;
+    ctx.fill();
+  });
+}
+
+function adicionarFolha(texto) {
+  const x = Math.random() * canvas.width;
+  const y = Math.random() * (canvas.height - 150);
+  const cores = ["#28a745", "#4caf50", "#2ecc71", "#6fbf73"];
+  const cor = cores[Math.floor(Math.random() * cores.length)];
+  folhas.push({ x, y, cor, texto });
+  desenharArvore();
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const texto = msgInput.value.trim();
+  if (texto) {
+    adicionarFolha(texto);
+    msgInput.value = "";
+  }
+});
+
+desenharArvore();
+
+
