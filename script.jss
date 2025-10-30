@@ -1,7 +1,7 @@
-// === SCRIPT DE ACESSIBILIDADE E ÁRVORE INTERATIVA ===
+// === SCRIPT FUNCIONAL PARA ACESSIBILIDADE E ÁRVORE INTERATIVA ===
 
 document.addEventListener("DOMContentLoaded", () => {
-  // === ACESSIBILIDADE ===
+  // ==== ACESSIBILIDADE ====
   let tamanhoFonte = 100;
   const body = document.body;
   const aumentarTexto = document.getElementById("aumentarTexto");
@@ -9,7 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const contrasteBtn = document.getElementById("altoContraste");
   const leitorBtn = document.getElementById("leitorVoz");
 
-  // Aumentar texto
+  let contrasteAtivo = false;
+  let leituraAtiva = false;
+
   aumentarTexto.addEventListener("click", () => {
     if (tamanhoFonte < 150) {
       tamanhoFonte += 10;
@@ -17,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Diminuir texto
   diminuirTexto.addEventListener("click", () => {
     if (tamanhoFonte > 80) {
       tamanhoFonte -= 10;
@@ -25,15 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Alternar alto contraste
-  let contrasteAtivo = false;
   contrasteBtn.addEventListener("click", () => {
     contrasteAtivo = !contrasteAtivo;
     body.classList.toggle("alto-contraste", contrasteAtivo);
   });
 
-  // Leitor de voz
-  let leituraAtiva = false;
   leitorBtn.addEventListener("click", () => {
     if (!leituraAtiva) {
       leituraAtiva = true;
@@ -50,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // === ÁRVORE INTERATIVA ===
+  // ==== ÁRVORE INTERATIVA ====
   const canvas = document.getElementById("canvas-arvore");
   const ctx = canvas.getContext("2d");
   const form = document.getElementById("form-arvore");
