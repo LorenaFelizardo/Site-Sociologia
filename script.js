@@ -1,76 +1,143 @@
+// === GARANTIR QUE O CÓDIGO RODE APÓS O CARREGAMENTO ===
 document.addEventListener("DOMContentLoaded", () => {
-  // Acessibilidade
+
+  // === ACESSIBILIDADE ===
+  let tamanhoFonte = 100;
+  const body = document.body;
   const aumentarTexto = document.getElementById("aumentarTexto");
   const diminuirTexto = document.getElementById("diminuirTexto");
-  const leitorVoz = document.getElementById("leitorVoz");
-  const altoContraste = document.getElementById("altoContraste");
 
-  let tamanhoFonte = 100;
+  aumentarTexto.addEventListener("click", () => {
+    if (tamanhoFonte < 150) {
+      tamanhoFonte += 10;
+      body.style.fontSize = tamanhoFonte + "%";
+    }
+  });
+
+  diminuirTexto.addEventListener("click", () => {
+    if (tamanhoFonte > 80) {
+      tamanhoFonte -= 10;
+      body.style.fontSize = tamanhoFonte + "%";
+    }
+  });
+
+  const contrasteBtn = document.getElementById("altoContraste");
   let contrasteAtivo = false;
 
-  if (aumentarTexto) {
-    aumentarTexto.addEventListener("click", () => {
-      tamanhoFonte += 10;
-      document.body.style.fontSize = `${tamanhoFonte}%`;
-    });
-  }
+  contrasteBtn.addEventListener("click", () => {
+    contrasteAtivo = !contrasteAtivo;
+    document.body.classList.toggle("alto-contraste", contrasteAtivo);
+  });
 
-  if (diminuirTexto) {
-    diminuirTexto.addEventListener("click", () => {
-      tamanhoFonte -= 10;
-      if (tamanhoFonte < 50) tamanhoFonte = 50;
-      document.body.style.fontSize = `${tamanhoFonte}%`;
-    });
-  }
+  const leitorBtn = document.getElementById("leitorVoz");
+  let leituraAtiva = false;
 
-  if (leitorVoz) {
-    leitorVoz.addEventListener("click", () => {
+  leitorBtn.addEventListener("click", () => {
+    if (!leituraAtiva) {
+      leituraAtiva = true;
       const texto = document.body.innerText;
-      const fala = new SpeechSynthesisUtterance(texto);
-      fala.lang = "pt-BR";
-      window.speechSynthesis.speak(fala);
-    });
+      const utterance = new SpeechSynthesisUtterance(texto);
+      utterance.lang = "pt-BR";
+      utterance.rate = 1.0;
+      speechSynthesis.speak(utterance);
+      leitorBtn.textContent = "⏸️ Pausar";
+    } else {
+      leituraAtiva = false;
+      speechSynthesis.cancel();
+      leitorBtn.textContent = "🔊 Ouvir";
+    }
+  });
+
+  // === ÁRVORE INTERATIVA ===
+  const canvas = document.getElementById("canvas-arvore");
+  if (!canvas) return; // segurança extra
+  const ctx = canvas.getContext("2d");
+  const form = document.getElementById("form-arvore");
+  const mensagens = [];
+
+  canvas.width = window.innerWidth * 0.8;
+  canvas.height = 600;
+
+  // Função para desenhar galhos estilo Guapuruvu
+  function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
+    if (profundidade === 0) return;
+
+    const x2 = x1 + Math.cos(angulo) * comprimento;
+    const y2 = y1 - Math.sin(angulo) * comprimento;
+
+    // Gradiente do galho
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    grad.addColorStop(0, "#6b4226");
+    grad.addColorStop(1, "#4e342e");
+
+    ctx.lineWidth = espessura;
+    ctx.strokeStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.bezierCurveTo(
+      x1 + Math.cos(angulo) * comprimento / 3,
+      y1 - Math.sin(angulo) * comprimento / 3,
+      x1 + Math.cos(angulo + 0.15) * (2 * comprimento / 3),
+      y1 - Math.sin(angulo + 0.15) * (2 * comprimento / 3),
+      x2,
+      y2
+    );
+    ctx.stroke();
+
+    // Ramificação espaçada estilo Guapuruvu
+    const numGalhos = 2;
+    for (let i = 0; i < numGalhos; i++) {
+      const novoAng = angulo + (i === 0 ? -0.5 : 0.5);
+      const novoComp = comprimento * 0.8;
+      const novaEsp = espessura * 0.7;
+      desenharGalho(x2, y2, novoComp, novoAng, profundidade - 1, novaEsp);
+    }
   }
 
-  if (altoContraste) {
-    altoContraste.addEventListener("click", () => {
-      contrasteAtivo = !contrasteAtivo;
-      document.body.style.backgroundColor = contrasteAtivo ? "black" : "white";
-      document.body.style.color = contrasteAtivo ? "yellow" : "black";
-    });
-  }
+  // Desenhar árvore estática estilo Guapuruvu
+  function desenharArvore() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Árvore interativa
-  const canvas = document.getElementById("treeCanvas");
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
-    const folhas = [];
+    // Tronco principal
+    desenharGalho(canvas.width / 2, canvas.height, 180, Math.PI / 2, 5, 20);
 
-    canvas.width = (window.innerWidth || 800) * 0.8;
-    canvas.height = 400;
-
-    // Tronco
-    ctx.fillStyle = "#8B4513";
-    ctx.fillRect(canvas.width / 2 - 10, canvas.height - 100, 20, 100);
-
-    function desenharFolha(x, y, cor) {
+    // Folhas (mensagens)
+    mensagens.forEach(msg => {
       ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fillStyle = cor;
+      ctx.fillStyle = msg.cor;
+      ctx.arc(msg.x, msg.y, 14, 0, Math.PI * 2);
       ctx.fill();
-    }
-
-    function novaFolha() {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * (canvas.height - 120);
-      const cor = `hsl(${Math.random() * 120}, 80%, 45%)`;
-      folhas.push({ x, y, cor });
-      desenharFolha(x, y, cor);
-    }
-
-    const botaoOpiniao = document.getElementById("adicionarOpiniao");
-    if (botaoOpiniao) {
-      botaoOpiniao.addEventListener("click", () => novaFolha());
-    }
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 12px Poppins";
+      ctx.textAlign = "center";
+      ctx.fillText("💬", msg.x, msg.y + 4);
+    });
   }
+
+  // Adicionar mensagens de usuários
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const texto = document.getElementById("mensagem").value.trim();
+    if (!texto) return;
+
+    const proibidas = ["palavrão", "idiota", "burro", "estúpido", "otário"];
+    if (proibidas.some(p => texto.toLowerCase().includes(p))) {
+      alert("Por favor, use uma linguagem respeitosa 💬");
+      return;
+    }
+
+    mensagens.push({
+      texto,
+      x: canvas.width / 2 + (Math.random() - 0.5) * 500,
+      y: 100 + Math.random() * 400,
+      cor: `hsl(${Math.random() * 120}, 70%, 45%)`
+    });
+
+    document.getElementById("mensagem").value = "";
+    desenharArvore();
+  });
+
+  // Inicializa árvore
+  desenharArvore();
+
 });
