@@ -388,6 +388,25 @@ body.alto-contraste button {
   color: #000 !important;
   border: 2px solid #fff;
 }
+/* ==== AJUSTE RESPONSIVO PARA CELULARES ==== */
+@media (max-width: 768px) {
+  .slide-container {
+    flex-direction: column; /* ✅ deixa os slides um abaixo do outro */
+    overflow: visible;      /* ✅ impede que o texto seja cortado */
+  }
+
+  .slide {
+    min-width: 90%;         /* ✅ ocupa bem o espaço no celular */
+    font-size: 0.95rem;     /* ✅ melhora a leitura */
+    padding: 20px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .section h2 {
+    font-size: 1.6rem;      /* ✅ título ajustado para telas menores */
+  }
+}
 
 
 
