@@ -324,26 +324,28 @@ input#mensagem {
 
 
 /* ==== FUTURO ==== */
+/* ==== FUTURO ==== */
 .slide-container {
   display: flex;
-  overflow: hidden;
+  flex-wrap: wrap; /* ✅ permite que o texto caiba sem cortar */
   justify-content: center;
   align-items: center;
   margin-top: 30px;
+  overflow: visible; /* ✅ garante que o texto apareça completo */
 }
-
 
 .slide {
   min-width: 60%;
   background: rgba(0,100,255,0.2);
   border-radius: 15px;
   padding: 25px;
-  margin: 0 10px;
+  margin: 10px;
   opacity: 0.6;
   transform: scale(0.9);
   transition: all 0.5s;
+  text-align: left; /* ✅ melhora a leitura do texto longo */
+  line-height: 1.6;
 }
-
 
 .slide.ativo {
   opacity: 1;
