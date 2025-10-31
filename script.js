@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const form = document.getElementById("form-arvore");
-  const mensagens = [];
+
+  // Carregar mensagens salvas
+  const mensagens = JSON.parse(localStorage.getItem("mensagensArvore")) || [];
 
   canvas.width = window.innerWidth * 0.8;
   canvas.height = 600;
@@ -97,23 +99,19 @@ document.addEventListener("DOMContentLoaded", () => {
     desenharGalho(canvas.width / 2, canvas.height, 180, Math.PI / 2, 5, 20);
 
     mensagens.forEach(msg => {
-      // Folha colorida
       ctx.beginPath();
       ctx.fillStyle = msg.cor;
       ctx.arc(msg.x, msg.y, 18, 0, Math.PI * 2);
       ctx.fill();
 
-      // Contorno sutil
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#2e7d32";
       ctx.stroke();
 
-      // Texto da pessoa
       ctx.fillStyle = "#fff";
       ctx.font = "bold 10px Poppins";
       ctx.textAlign = "center";
 
-      // Divide o texto em duas linhas se for longo
       const palavras = msg.texto.split(" ");
       let linha1 = palavras.slice(0, 2).join(" ");
       let linha2 = palavras.slice(2).join(" ");
@@ -133,12 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    mensagens.push({
+    const novaMensagem = {
       texto,
       x: canvas.width / 2 + (Math.random() - 0.5) * 500,
       y: 100 + Math.random() * 400,
       cor: `hsl(${Math.random() * 120}, 70%, 45%)`
-    });
+    };
+
+    mensagens.push(novaMensagem);
+
+    // Salvar localmente
+    localStorage.setItem("mensagensArvore", JSON.stringify(mensagens));
 
     document.getElementById("mensagem").value = "";
     desenharArvore();
