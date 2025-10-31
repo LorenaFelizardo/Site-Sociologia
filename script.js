@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // === ÁRVORE INTERATIVA ===
   const canvas = document.getElementById("canvas-arvore");
-  if (!canvas) return; // segurança extra
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const form = document.getElementById("form-arvore");
   const mensagens = [];
@@ -58,14 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.width = window.innerWidth * 0.8;
   canvas.height = 600;
 
-  // Função para desenhar galhos estilo Guapuruvu
   function desenharGalho(x1, y1, comprimento, angulo, profundidade, espessura) {
     if (profundidade === 0) return;
 
     const x2 = x1 + Math.cos(angulo) * comprimento;
     const y2 = y1 - Math.sin(angulo) * comprimento;
 
-    // Gradiente do galho
     const grad = ctx.createLinearGradient(x1, y1, x2, y2);
     grad.addColorStop(0, "#6b4226");
     grad.addColorStop(1, "#4e342e");
@@ -84,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     ctx.stroke();
 
-    // Ramificação espaçada estilo Guapuruvu
     const numGalhos = 2;
     for (let i = 0; i < numGalhos; i++) {
       const novoAng = angulo + (i === 0 ? -0.5 : 0.5);
@@ -94,27 +91,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Desenhar árvore estática estilo Guapuruvu
   function desenharArvore() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Tronco principal
     desenharGalho(canvas.width / 2, canvas.height, 180, Math.PI / 2, 5, 20);
 
-    // Folhas (mensagens)
     mensagens.forEach(msg => {
+      // Folha colorida
       ctx.beginPath();
       ctx.fillStyle = msg.cor;
-      ctx.arc(msg.x, msg.y, 14, 0, Math.PI * 2);
+      ctx.arc(msg.x, msg.y, 18, 0, Math.PI * 2);
       ctx.fill();
+
+      // Contorno sutil
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#2e7d32";
+      ctx.stroke();
+
+      // Texto da pessoa
       ctx.fillStyle = "#fff";
-      ctx.font = "bold 12px Poppins";
+      ctx.font = "bold 10px Poppins";
       ctx.textAlign = "center";
-      ctx.fillText("💬", msg.x, msg.y + 4);
+
+      // Divide o texto em duas linhas se for longo
+      const palavras = msg.texto.split(" ");
+      let linha1 = palavras.slice(0, 2).join(" ");
+      let linha2 = palavras.slice(2).join(" ");
+      ctx.fillText(linha1, msg.x, msg.y - 2);
+      if (linha2) ctx.fillText(linha2, msg.x, msg.y + 10);
     });
   }
 
-  // Adicionar mensagens de usuários
   form.addEventListener("submit", e => {
     e.preventDefault();
     const texto = document.getElementById("mensagem").value.trim();
@@ -137,7 +144,5 @@ document.addEventListener("DOMContentLoaded", () => {
     desenharArvore();
   });
 
-  // Inicializa árvore
   desenharArvore();
-
 });
